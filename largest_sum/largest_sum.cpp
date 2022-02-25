@@ -1,8 +1,23 @@
 #include <vector>
 #include <sstream>
-#include "../IO.h"
+#include "../substring/IO.h"
 
 using namespace std;
+
+vector<int> parseInt(string str);
+string largestSum(const vector<int>& input);
+
+int main() {
+    string input = Read();
+
+    vector<int> array = parseInt(input);
+
+    string output = largestSum(array);
+
+    Write(output);
+
+    return 0;
+}
 
 vector<int> parseInt(string str) {
     vector<int> output;
@@ -20,16 +35,4 @@ string largestSum(const vector<int>& input) {
         if (sum < 0) sum = 0;
     }
     return to_string(output);
-}
-
-int main() {
-    string input = Read();
-
-    vector<int> array = parseInt(input);
-
-    string output = largestSum(array);
-
-    Write(output);
-
-    return 0;
 }
