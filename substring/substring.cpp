@@ -1,14 +1,17 @@
 #include <vector>
 #include <sstream>
-#include "IO.h"
+#include <iostream>
+#include <fstream>
+#include <algorithm>
 
 using namespace std;
 
 vector<int> Counter(const vector<string>& combinations, string text);
 vector<string> Combinator(vector<string> words);
 vector<string> Parser(string input);
-
+void Write(const string &output);
 string asString(vector<int> n);
+vector<string> Read();
 int factorial(int i);
 
 int main() {
@@ -27,6 +30,24 @@ int main() {
     Write(asString(output));
 
     return 0;
+}
+
+void Write(const string &output) {
+    cout << output;
+    ofstream file;
+    file.open("output.txt");
+    file << output;
+    file.close();
+}
+
+vector<string> Read() {
+    string line;
+    vector<string >input;
+    ifstream file("input.txt");
+    while (getline(file, line))
+        input.push_back(line);
+    file.close();
+    return input;
 }
 
 string asString(vector<int> n) {

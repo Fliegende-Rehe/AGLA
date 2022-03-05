@@ -3,4 +3,4 @@ project(ssad)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ssad IO.h main.cpp)
+add_executable(ssad matrix/inverse.cpp)
