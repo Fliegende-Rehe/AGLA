@@ -54,9 +54,8 @@ vector<vector<float>> inv(vector<vector<float>> m) {
                          {adj[0][2], adj[1][2], adj[2][2]}};
     for (auto & i : t_adj) {
         vector<float> row;
-        for (float j : i) {
+        for (float j : i)
             row.push_back(j / det);
-        }
         inverse.push_back(row);
     }
     return inverse;
@@ -65,13 +64,10 @@ vector<vector<float>> inv(vector<vector<float>> m) {
 void write(vector<vector<float>> output) {
     ofstream file;
     file.open("output.txt");
+    file.precision(2);
     for (int i = 0; i < output.size(); ++i) {
-        for (int j = 0; j < output.size(); ++j) {
-            file << fixed << setprecision(2);
-            if(output[i][j] != 0) file << output[i][j];
-            else file << abs(output[i][j]);
-            file << " ";
-        }
+        for (int j = 0; j < output.size(); ++j)
+            file << fixed << output[i][j] << " ";
         file << "\n";
     }
     file.close();
