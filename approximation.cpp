@@ -1,78 +1,44 @@
-#include"approximation.h"
+#include<sstream>
+#include<fstream>
+#include<vector>
+
+#define vvf vector<vector<float>>
+#define vf vector<float>
+
+using namespace std;
+
+vvf multiplication(vvf a, vvf b),
+        transpose(const vvf &a),
+        inverse(vvf m),
+        read();
+void write(const vector<pair<string, vvf>> &output);
 
 int main() {
-    array input = read();
-    vector<pair<string, array >> output;
-
-    array A;
-    for (const auto &row: input) {
-        vector<float> r = {1.00};
+    vvf A, b;
+    for (const auto &row: read()) {
+        vf r = {1.00};
         for (int i = 0; i < row.size() - 1; ++i) r.push_back(row[i]);
         A.push_back(r);
+        b.push_back({row[2]});
     }
-    push("A", A);
 
-    array b;
-    for (const auto &row: input) {
-        vector<float> r = {row[2]};
-        b.push_back(r);
-    }
-    push("b", b);
+    vvf At = transpose(A),
+            AtA = multiplication(At, A),
+            iAtA = inverse(AtA),
+            iAtAAt = multiplication(iAtA, At),
+            x = multiplication(iAtAAt, b);
 
-    array AT = transpose(A);
-    array ATA = multiplication(AT, A);
-    push("A_T*A", ATA);
-
-    array invATA = inverse(ATA);
-    push("(A_T*A)_-1", invATA);
-
-    array invATAT = multiplication(invATA, AT);
-    push("(A_T*A)_-1*A_T", invATAT);
-
-    push("x", multiplication(invATAT, b)); //getX(A, b)
-
-    write(output);
+    write({{"A",              A},
+           {"b",              b},
+           {"A_T*A",          AtA},
+           {"(A_T*A)_-1",     iAtA},
+           {"(A_T*A)_-1*A_T", iAtAAt},
+           {"x",              x}});
     return 0;
 }
 
-void rref(array B) {
-    const int row = B.size();
-    const int col = B[0].size();
-    int lead = 0;
-    while (lead < row) {
-        float d, m;
-        for (int r = 0; r < row; r++) {
-            d = B[lead][lead];
-            m = B[r][lead] / B[lead][lead];
-            for (int c = 0; c < col; c++) { 
-                if (r == lead) B[r][c] /= d;
-                else B[r][c] -= B[lead][c] * m;
-            }
-        }
-        lead++;
-    }
-}
-
-array getX(array a, array b) {
-    array x,
-            at = transpose(a),
-            ata = multiplication(at, a),
-            atb = multiplication(at, move(b));
-
-    for (int i = 0; i < ata.size(); ++i)
-        ata[i].push_back(atb[i][0]);
-
-    rref(ata);
-    for(auto row : ata) {
-        vector<float> c;
-        c.push_back(row[ata[0].size() - 1]);
-        x.push_back(c);
-    }
-    return x;
-}
-
-array inverse(array m) {
-    array inverse;
+vvf inverse(vvf m) {
+    vvf inverse;
     float a = m[0][0], b = m[0][1], c = m[0][2],
             d = m[1][0], e = m[1][1], f = m[1][2],
             g = m[2][0], h = m[2][1], i = m[2][2];
@@ -84,7 +50,7 @@ array inverse(array m) {
                          {adj[0][1], adj[1][1], adj[2][1]},
                          {adj[0][2], adj[1][2], adj[2][2]}};
     for (auto &k: t_adj) {
-        vector<float> row;
+        vf row;
         for (float j: k)
             row.push_back(j / det);
         inverse.push_back(row);
@@ -92,10 +58,10 @@ array inverse(array m) {
     return inverse;
 }
 
-array multiplication(array a, array b) {
-    array c;
+vvf multiplication(vvf a, vvf b) {
+    vvf c;
     for (int i = 0; i < a.size(); i++) {
-        vector<float> row(b[0].size());
+        vf row(b[0].size());
         for (int j = 0; j < b[0].size(); j++) {
             row[j] = 0;
             for (int k = 0; k < a[0].size(); k++)
@@ -106,23 +72,23 @@ array multiplication(array a, array b) {
     return c;
 }
 
-array transpose(const array &a) {
-    array at;
+vvf transpose(const vvf &a) {
+    vvf At;
     for (int i = 0; i < a[0].size(); ++i) {
-        vector<float> row;
+        vf row;
         row.reserve(a.size());
         for (const auto &j: a)
             row.push_back(j[i]);
-        at.push_back(row);
+        At.push_back(row);
     }
-    return at;
+    return At;
 }
 
-array read() {
-    array input;
+vvf read() {
+    vvf input;
     ifstream file("input.txt");
     for (string line; getline(file, line);) {
-        vector<float> numbers;
+        vf numbers;
         stringstream stream(line);
         for (string n; stream >> n;)
             numbers.push_back(stof(n));
@@ -133,14 +99,14 @@ array read() {
     return input;
 }
 
-void write(const vector<pair<string, array>> &output) {
+void write(const vector<pair<string, vvf>> &output) {
     ofstream file;
     file.open("output.txt");
     file.precision(2);
     fixed(file);
     for (auto[key, value]: output) {
         file << key << ":\n";
-        array matrix = value;
+        vvf matrix = value;
         for (const auto &row: matrix) {
             for (auto column: row)
                 file << column << " ";
